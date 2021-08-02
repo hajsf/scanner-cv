@@ -28,7 +28,7 @@ function exportTableToExcel(tableID, filename = ''){
         downloadLink.click();
     }
 }
-
+/*
 async function send(params) {
     var path = document.querySelector('#path');
     var skills = document.querySelector('#skills');
@@ -56,19 +56,20 @@ async function send(params) {
                console.log(err)
            })    
 }
-/*
-function send(params) {
+*/
+async function send(params) {
     var path = document.querySelector('#path');
     var skills = document.querySelector('#skills');
     var skillsList = skills.value
     skillsList = skillsList.replace(/\n\r?/g, '|');
     const dataToSend = JSON.stringify({"path": path.value, "skills": skillsList});
+    console.log(dataToSend);
     let dataReceived = ""; 
     fetch("http://localhost:3000/getSkills", {
         credentials: "same-origin",
         mode: "cors",
         method: "post",
-        headers: { "Content-Type": "text/plain; charset=utf-8"}, //"application/json" },
+        headers: { "Content-Type": "application/json" },
         body: dataToSend
     }).then(resp => {
         if (resp.status === 200) {
@@ -78,10 +79,21 @@ function send(params) {
             return Promise.reject("server")
         }
     }).then(dataJson => {
-        dataReceived = JSON.parse(dataJson)
-        console.log(`Received: ${dataReceived}`)
+        console.log(dataJson)
+       // dataReceived = JSON.parse(dataJson)
+      //  console.log(`Received: ${dataJson}, ${dataJson.msg}`)
+      var tblData = document.querySelector('#tblData');
+      const newRow = document.createElement("tr");
+      newRow.innerHTML='<td onclick="tdclick(this)">'+dataJson.file+'</td><td>'+dataJson.skills+'</td>'
+      tblData.appendChild(newRow)
     }).catch(err => {
         if (err === "server") return
         console.log(err)
-    })
-} */
+    }) 
+} 
+
+function tdclick(el){
+    console.log(el.innerHTML);
+    var pdf = document.querySelector('#pdf');
+    pdf.src = "/pdf/"+el.innerHTML+".pdf"
+}
